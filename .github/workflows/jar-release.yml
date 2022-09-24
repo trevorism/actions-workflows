@@ -46,7 +46,7 @@ jobs:
 
       - name: Replace gradle properties
         run: |
-          sed -ie "/version=/ s/=.*/=${{ steps.bump_version.outputs.next-version }}/" ./gradle.properties
+          sed -i "/version=/ s/=.*/=${{ steps.bump_version.outputs.next-version }}/" ./gradle.properties
 
       - name: Commit change
         uses: stefanzweifel/git-auto-commit-action@v4
