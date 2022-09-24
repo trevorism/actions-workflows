@@ -2,7 +2,6 @@ name: Gradle Jar Release
 
 on:
   workflow_call:
-    inputs:
 
 permissions: write-all
 
