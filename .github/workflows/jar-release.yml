@@ -3,9 +3,6 @@ name: Gradle Jar Release
 on:
   workflow_call:
     inputs:
-      NEW_VERSION:
-        type: string
-        required: true
 
 permissions: write-all
 
@@ -38,9 +35,16 @@ jobs:
           RELEASE_VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f3)
           ./gradlew -Pversion=${RELEASE_VERSION} publishRelease
 
+      - name: Bump release version
+        id: bump_version
+        uses: christian-draeger/increment-semantic-version@1.0.2
+        with:
+          current-version: ${{ RELEASE_VERSION }}
+          version-fragment: 'bug'
+
       - name: Replace gradle properties
         run: |
-          sed -ie "/version=/ s/=.*/=${{ NEW_VERSION }}/" ./gradle.properties
+          sed -ie "/version=/ s/=.*/=${{ steps.bump_version.outputs.next-version }}/" ./gradle.properties
 
       - name: Commit change
         uses: stefanzweifel/git-auto-commit-action@v4
