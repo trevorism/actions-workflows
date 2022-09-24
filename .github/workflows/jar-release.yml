@@ -2,11 +2,9 @@ name: Gradle Jar Release
 
 on:
   workflow_call:
-    secrets:
-      GITHUB_TOKEN:
-        required: true
     inputs:
       NEW_VERSION:
+        type: string
         required: true
 
 permissions: write-all
