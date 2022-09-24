@@ -5,14 +5,16 @@ on:
     secrets:
       GITHUB_TOKEN:
         required: true
+    inputs:
+      NEW_VERSION:
+        required: true
+
+permissions: write-all
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
 
     steps:
       - uses: actions/checkout@v3
@@ -35,5 +37,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          NEW_VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f3)
-          ./gradlew -Pversion=${NEW_VERSION} publishRelease
+          RELEASE_VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f3)
+          ./gradlew -Pversion=${RELEASE_VERSION} publishRelease
+
+      - name: Replace gradle properties
+        run: |
+          sed -ie "/version=/ s/=.*/=${{ NEW_VERSION }}/" ./gradle.properties
+
+      - name: Commit change
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'Bump gradle.properties'
+          push_options: '--force'
