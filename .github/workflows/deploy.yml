@@ -2,7 +2,6 @@ name: Build and Deploy App to GCP
 
 on:
   workflow_call:
-    secrets: inherit
     inputs:
       service_account:
         description: 'github-trevorism-<project name>@trevorism-<project name>.iam.gserviceaccount.com'
@@ -21,7 +20,13 @@ on:
         required: false
         default: false
         type: boolean
-
+    secrets:
+      CLIENT_ID:
+        required: true
+      CLIENT_SECRET:
+        required: true
+      SIGNING_KEY:
+        required: true
 
 permissions: write-all
 
