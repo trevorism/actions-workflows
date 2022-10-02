@@ -2,9 +2,10 @@ name: Build and Deploy App to GCP
 
 on:
   workflow_call:
-    secrets:
-      SECRETS_CONTEXT:
+    inputs:
+      INJECT_SECRETS:
         required: false
+        type: string
 
 permissions: write-all
 
@@ -29,12 +30,7 @@ jobs:
       - name: Create secrets file
         uses: Amadevus/pwsh-script@v2
         with:
-          script: |
-            Write-Host "Hello World"
-            Write-Host (gci env:*CLIENT*)
-            Write-Host (gci env:*CONTEXT*)
-            Write-Host (gci env:*SECRET*)
-
+          script: ${{ inputs.INJECT_SECRETS }}
 
       - name: Acceptance test with Gradle
         uses: gradle/gradle-build-action@v2.3.1
