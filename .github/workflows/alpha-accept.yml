@@ -31,9 +31,11 @@ jobs:
         id: script
         with:
           script: |
-            $json = ${{inputs.classpath_secrets}}
+            $json = ${{secrets.classpath_secrets}}
             Write-Host $json
             Write-Host $json.GetType()
+            $obj = $json | ConvertFrom-Json
+            Write-Host $obj
 
       - name: Acceptance test with Gradle
         uses: gradle/gradle-build-action@2.3.1
