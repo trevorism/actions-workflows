@@ -30,13 +30,16 @@ jobs:
         uses: Amadevus/pwsh-script@v2
         with:
           script: |
-            gci env:*CLIENT*
-            gci env:*CONTEXT*
-            gci env:*SECRET*
+            Write-Host "Hello World"
+            Write-Host (gci env:*CLIENT*)
+            Write-Host (gci env:*CONTEXT*)
+            Write-Host (gci env:*SECRET*)
 
 
       - name: Acceptance test with Gradle
         uses: gradle/gradle-build-action@v2.3.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           arguments: acceptance
 
