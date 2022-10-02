@@ -1,0 +1,44 @@
+name: Build and Deploy App to GCP
+
+on:
+  workflow_call:
+    inputs:
+      classpath_secrets:
+        description: 'Secrets to inject into the classpath in json format'
+        required: false
+        type: string
+
+permissions: write-all
+
+jobs:
+  deliver:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+          cache: 'gradle'
+
+      - name: Chmod gradlew
+        run: chmod +x ./gradlew
+
+      - name: Create secrets file
+        uses: Amadevus/pwsh-script@v2
+        id: script
+        with:
+          script: |
+            $json = ${{inputs.classpath_secrets}}
+            Write-Host $json
+            Write-Host $json.GetType()
+
+      - name: Acceptance test with Gradle
+        uses: gradle/gradle-build-action@2.3.1
+        with:
+          arguments: acceptance
+
