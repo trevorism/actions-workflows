@@ -28,13 +28,14 @@ jobs:
 
       - name: Create secrets file
         uses: Amadevus/pwsh-script@v2
-        id: script
+        env:
+          SECRETS_CONTEXT: "${{ toJson(secrets) }}"
         with:
           script: |
-            $json = ${{secrets.classpath_secrets}}
-            Write-Host $json
-            Write-Host $json.GetType()
-            $obj = $json | ConvertFrom-Json
+            $secrets = $env:SECRETS_CONTEXT
+            Write-Host $secrets
+            Write-Host $secrets.GetType()
+            $obj = $json | ConvertFrom-Json -AsHashtable
             Write-Host $obj
 
       - name: Acceptance test with Gradle
