@@ -28,13 +28,11 @@ jobs:
 
       - name: Create secrets file
         uses: Amadevus/pwsh-script@v2
+        env:
+          CONTEXT: ${{ secrets.SECRETS_CONTEXT}}
         with:
           script: |
-            $secrets = $env:SECRETS_CONTEXT
-            Write-Host $secrets
-            Write-Host $secrets.GetType()
-            $obj = $json | ConvertFrom-Json -AsHashtable
-            Write-Host $obj
+            gci env:
 
       - name: Acceptance test with Gradle
         uses: gradle/gradle-build-action@v2.3.1
