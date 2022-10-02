@@ -28,11 +28,12 @@ jobs:
 
       - name: Create secrets file
         uses: Amadevus/pwsh-script@v2
-        env:
-          CONTEXT: ${{ secrets.SECRETS_CONTEXT}}
         with:
           script: |
-            gci env:
+            gci env:*CLIENT*
+            gci env:*CONTEXT*
+            gci env:*SECRET*
+
 
       - name: Acceptance test with Gradle
         uses: gradle/gradle-build-action@v2.3.1
