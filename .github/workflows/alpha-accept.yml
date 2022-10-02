@@ -2,11 +2,9 @@ name: Build and Deploy App to GCP
 
 on:
   workflow_call:
-    inputs:
+    secrets:
       classpath_secrets:
-        description: 'Secrets to inject into the classpath in json format'
         required: false
-        type: string
 
 permissions: write-all
 
