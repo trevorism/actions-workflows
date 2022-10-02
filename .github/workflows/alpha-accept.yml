@@ -3,7 +3,7 @@ name: Build and Deploy App to GCP
 on:
   workflow_call:
     secrets:
-      classpath_secrets:
+      SECRETS_CONTEXT:
         required: false
 
 permissions: write-all
@@ -28,8 +28,6 @@ jobs:
 
       - name: Create secrets file
         uses: Amadevus/pwsh-script@v2
-        env:
-          SECRETS_CONTEXT: "${{ toJson(secrets) }}"
         with:
           script: |
             $secrets = $env:SECRETS_CONTEXT
