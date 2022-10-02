@@ -38,7 +38,7 @@ jobs:
             Write-Host $obj
 
       - name: Acceptance test with Gradle
-        uses: gradle/gradle-build-action@2.3.1
+        uses: gradle/gradle-build-action@v2.3.1
         with:
           arguments: acceptance
 
