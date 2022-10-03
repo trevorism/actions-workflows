@@ -1,4 +1,4 @@
-name: Gradle Publish
+name: Publish jar with Gradle
 
 on:
   release:
@@ -6,4 +6,4 @@ on:
 
 jobs:
   call-jar-release:
-    uses: trevorism/actions-workflows/.github/workflows/jar-release.yml@master
+    uses: trevorism/actions-workflows/.github/workflows/release.yml@master

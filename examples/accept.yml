@@ -1,0 +1,14 @@
+name: Invoke tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  call-build:
+    uses: trevorism/actions-workflows/.github/workflows/accept.yml@master
+    secrets:
+      TOKEN: ${{ secrets.TOKEN }}
+
