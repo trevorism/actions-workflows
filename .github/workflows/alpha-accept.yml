@@ -6,6 +6,23 @@ on:
       INJECT_SECRETS:
         required: false
         type: string
+    secrets:
+      CLIENT_ID:
+        required: false
+      CLIENT_SECRET:
+        required: false
+      SIGNING_KEY:
+        required: false
+      TOKEN:
+        required: false
+      ACCESS_TOKEN:
+        required: false
+      API_KEY:
+        required: false
+      API_SECRET:
+        required: false
+      ENCRYPTION_KEY:
+        required: false
 
 permissions: write-all
 
@@ -29,8 +46,17 @@ jobs:
 
       - name: Create secrets file
         uses: Amadevus/pwsh-script@v2
+        id: acceptance-props
         with:
-          script: ${{ inputs.INJECT_SECRETS }}
+          script: |
+            Add-Content -Path .\src\acceptance\resources\secrets.properties -Value 'clientId=${{ secrets.CLIENT_ID }}'
+            Add-Content -Path .\src\acceptance\resources\secrets.properties -Value 'clientSecret=${{ secrets.CLIENT_SECRET }}'
+            Add-Content -Path .\src\acceptance\resources\secrets.properties -Value 'signingKey=${{ secrets.SIGNING_KEY }}'
+            Add-Content -Path .\src\acceptance\resources\secrets.properties -Value 'token=${{ secrets.TOKEN }}'
+            Add-Content -Path .\src\acceptance\resources\secrets.properties -Value 'accessToken=${{ secrets.ACCESS_TOKEN }}'
+            Add-Content -Path .\src\acceptance\resources\secrets.properties -Value 'apiKey=${{ secrets.API_KEY }}'
+            Add-Content -Path .\src\acceptance\resources\secrets.properties -Value 'apiSecret=${{ secrets.API_SECRET }}'
+            Add-Content -Path .\src\acceptance\resources\secrets.properties -Value 'encryptionKey=${{ secrets.ENCRYPTION_KEY }}'
 
       - name: Acceptance test with Gradle
         uses: gradle/gradle-build-action@v2.3.1
