@@ -17,9 +17,9 @@ on:
         type: string
     secrets:
       CLIENT_ID:
-        required: true
+        required: false
       CLIENT_SECRET:
-        required: true
+        required: false
       SIGNING_KEY:
         required: true
       TOKEN:
