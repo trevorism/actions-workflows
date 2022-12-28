@@ -33,5 +33,5 @@ jobs:
 
       # run only if 'backend' files were changed
       - name: backend tests
-        if: steps.filter.outputs.backend == 'true'
-        run: echo ${{ steps.filter.outputs.backend }}
+        if: steps.filter.outputs.database == 'true'
+        run: echo ${{ steps.filter.outputs.database }}
