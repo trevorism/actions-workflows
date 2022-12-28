@@ -1,8 +1,8 @@
-name: Gradle Jar Release
+name: Testing a community wf action
 
 on:
   push:
-    - '**'
+    branches: [ '**' ]
 
 permissions: write-all
 
