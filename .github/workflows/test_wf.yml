@@ -3,6 +3,8 @@ name: Testing a community wf action
 on:
   push:
     branches: [ '**' ]
+  pull_request:
+
 
 permissions: write-all
 
