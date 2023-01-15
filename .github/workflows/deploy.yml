@@ -43,10 +43,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up JDK 8
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: '17'
           distribution: 'adopt'
           cache: 'gradle'
 
@@ -59,26 +59,26 @@ jobs:
           service_account: ${{ format('github-{0}@{0}.iam.gserviceaccount.com', inputs.gcp_project ) }}
           workload_identity_provider: ${{ format('projects/{0}/locations/global/workloadIdentityPools/github-{1}-pool/providers/{1}-provider', inputs.gcp_project_id, inputs.gcp_project) }}
 
+      - name: Create secrets file
+        uses: Amadevus/pwsh-script@v2
+        id: script
+        with:
+          script: |
+            Add-Content -Path .\src\main\resources\secrets.properties -Value 'clientId=${{ secrets.CLIENT_ID }}'
+            Add-Content -Path .\src\main\resources\secrets.properties -Value 'clientSecret=${{ secrets.CLIENT_SECRET }}'
+            Add-Content -Path .\src\main\resources\secrets.properties -Value 'signingKey=${{ secrets.SIGNING_KEY }}'
+            Add-Content -Path .\src\main\resources\secrets.properties -Value 'token=${{ secrets.TOKEN }}'
+            Add-Content -Path .\src\main\resources\secrets.properties -Value 'accessToken=${{ secrets.ACCESS_TOKEN }}'
+            Add-Content -Path .\src\main\resources\secrets.properties -Value 'apiKey=${{ secrets.API_KEY }}'
+            Add-Content -Path .\src\main\resources\secrets.properties -Value 'apiSecret=${{ secrets.API_SECRET }}'
+            Add-Content -Path .\src\main\resources\secrets.properties -Value 'encryptionKey=${{ secrets.ENCRYPTION_KEY }}'
+            
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2.3.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           arguments: clean appengineStage
-
-      - name: Create secrets file
-        uses: Amadevus/pwsh-script@v2
-        id: script
-        with:
-          script: |
-            Add-Content -Path .\build\staged-app\WEB-INF\classes\secrets.properties -Value 'clientId=${{ secrets.CLIENT_ID }}'
-            Add-Content -Path .\build\staged-app\WEB-INF\classes\secrets.properties -Value 'clientSecret=${{ secrets.CLIENT_SECRET }}'
-            Add-Content -Path .\build\staged-app\WEB-INF\classes\secrets.properties -Value 'signingKey=${{ secrets.SIGNING_KEY }}'
-            Add-Content -Path .\build\staged-app\WEB-INF\classes\secrets.properties -Value 'token=${{ secrets.TOKEN }}'
-            Add-Content -Path .\build\staged-app\WEB-INF\classes\secrets.properties -Value 'accessToken=${{ secrets.ACCESS_TOKEN }}'
-            Add-Content -Path .\build\staged-app\WEB-INF\classes\secrets.properties -Value 'apiKey=${{ secrets.API_KEY }}'
-            Add-Content -Path .\build\staged-app\WEB-INF\classes\secrets.properties -Value 'apiSecret=${{ secrets.API_SECRET }}'
-            Add-Content -Path .\build\staged-app\WEB-INF\classes\secrets.properties -Value 'encryptionKey=${{ secrets.ENCRYPTION_KEY }}'
 
       - name: 'Deploy to App Engine'
         uses: 'google-github-actions/deploy-appengine@v0.8.0'
