@@ -68,6 +68,7 @@ jobs:
         id: script
         with:
           script: |
+            New-Item -Path .\src\main\resources -ItemType Directory -Force
             Add-Content -Path .\src\main\resources\secrets.properties -Value 'clientId=${{ secrets.CLIENT_ID }}'
             Add-Content -Path .\src\main\resources\secrets.properties -Value 'clientSecret=${{ secrets.CLIENT_SECRET }}'
             Add-Content -Path .\src\main\resources\secrets.properties -Value 'signingKey=${{ secrets.SIGNING_KEY }}'
