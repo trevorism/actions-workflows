@@ -6,6 +6,10 @@ on:
       INJECT_SECRETS:
         required: false
         type: string
+      JDK_VERSION:
+        required: false
+        type: string
+        default: '8'
     secrets:
       CLIENT_ID:
         required: false
@@ -34,10 +38,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up JDK 8
+      - name: Set up JDK ${{inputs.JDK_VERSION}}
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: ${{inputs.JDK_VERSION}}
           distribution: 'adopt'
           cache: 'gradle'
 
