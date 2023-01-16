@@ -63,12 +63,15 @@ jobs:
           service_account: ${{ format('github-{0}@{0}.iam.gserviceaccount.com', inputs.gcp_project ) }}
           workload_identity_provider: ${{ format('projects/{0}/locations/global/workloadIdentityPools/github-{1}-pool/providers/{1}-provider', inputs.gcp_project_id, inputs.gcp_project) }}
 
+      - name: Create directory
+        shell: bash
+        run: mkdir -p ./src/main/resources
+
       - name: Create secrets file
         uses: Amadevus/pwsh-script@v2
         id: script
         with:
           script: |
-            New-Item -Path .\src\main\resources -ItemType Directory -Force
             Add-Content -Path .\src\main\resources\secrets.properties -Value 'clientId=${{ secrets.CLIENT_ID }}'
             Add-Content -Path .\src\main\resources\secrets.properties -Value 'clientSecret=${{ secrets.CLIENT_SECRET }}'
             Add-Content -Path .\src\main\resources\secrets.properties -Value 'signingKey=${{ secrets.SIGNING_KEY }}'
