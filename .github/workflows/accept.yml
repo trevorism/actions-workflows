@@ -1,4 +1,4 @@
-name: Build and Deploy App to GCP
+name: Run Cucumber acceptance tests
 
 on:
   workflow_call:
