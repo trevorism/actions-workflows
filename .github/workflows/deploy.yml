@@ -93,10 +93,3 @@ jobs:
           deliverables: 'app.yaml'
           promote: true
           version: ${{ inputs.version }}
-
-      - name: Commit version bump
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: 'Bump gradle.properties'
-          branch: 'master'
-          push_options: '--force'
