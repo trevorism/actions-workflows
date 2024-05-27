@@ -98,4 +98,4 @@ jobs:
         uses: dkershner6/post-api-call-action@v2
         with:
           url: "https://event.data.trevorism.com/event/deploy"
-          data: "{\"service\": ${{ github.event.repository.name }}, \"gcpProject\":${{ inputs.gcp_project }},\"version\":${{ inputs.version}}, \"date\":${{ github.event.repository.updated_at}}}"
+          data: "{\"service\":\"${{ github.event.repository.name }}\",\"gcpProject\":\"${{ inputs.gcp_project }}\",\"version\":\"${{ inputs.version}}\", \"date\":\"${{ github.event.repository.updated_at}}\"}"
