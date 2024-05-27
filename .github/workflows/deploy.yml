@@ -94,10 +94,8 @@ jobs:
           promote: true
           version: ${{ inputs.version }}
 
-      - name: Commit change
-        uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Send deploy event
+        uses: dkershner6/post-api-call-action@v2
         with:
-          file_pattern: README.md build.gradle gradle.properties src/*
-          commit_message: 'Bump gradle.properties'
-          branch: 'master'
-          push_options: '--force'
+          url: "https://event.data.trevorism.com/event/deploy"
+          data: "{\"service\": ${{ github.event.repository.name }}, \"gcpProject\":${{ inputs.gcp_project }},\"version\":${{ inputs.version}}, \"date\":${{ github.event.repository.updated_at}}}"
