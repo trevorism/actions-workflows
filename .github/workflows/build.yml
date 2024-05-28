@@ -26,12 +26,11 @@ jobs:
       - name: Chmod gradlew
         run: chmod +x ./gradlew
 
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2.3.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          arguments: clean build -P"trevorism.test.event=enabled"
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Execute Gradle build
+        run: ./gradlew clean build -P"trevorism.test.event=enabled"
 
       - name: JUnit Report Action
         uses: mikepenz/action-junit-report@v3.5.0
