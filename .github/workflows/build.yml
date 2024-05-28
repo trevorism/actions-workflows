@@ -31,6 +31,8 @@ jobs:
 
       - name: Execute Gradle build
         run: ./gradlew clean build -P"trevorism.test.event=enabled"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: JUnit Report Action
         uses: mikepenz/action-junit-report@v3.5.0
