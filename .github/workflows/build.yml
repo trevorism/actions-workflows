@@ -31,7 +31,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          arguments: clean build
+          arguments: clean build -P"trevorism.test.event=enabled"
 
       - name: JUnit Report Action
         uses: mikepenz/action-junit-report@v3.5.0
