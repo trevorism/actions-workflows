@@ -34,6 +34,8 @@ on:
         required: false
       API_SECRET:
         required: false
+      API_SECRET_2:
+        required: false
       ENCRYPTION_KEY:
         required: false
 
@@ -77,6 +79,7 @@ jobs:
             Add-Content -Path .\src\main\resources\secrets.properties -Value 'accessToken=${{ secrets.ACCESS_TOKEN }}'
             Add-Content -Path .\src\main\resources\secrets.properties -Value 'apiKey=${{ secrets.API_KEY }}'
             Add-Content -Path .\src\main\resources\secrets.properties -Value 'apiSecret=${{ secrets.API_SECRET }}'
+            Add-Content -Path .\src\main\resources\secrets.properties -Value 'apiSecret2=${{ secrets.API_SECRET_2 }}'
             Add-Content -Path .\src\main\resources\secrets.properties -Value 'encryptionKey=${{ secrets.ENCRYPTION_KEY }}'
             
       - name: Setup Gradle
