@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v4.7.1
         with:
           java-version: ${{ inputs.JDK_VERSION}}
-          distribution: 'termurin'
+          distribution: 'temurin'
           cache: 'gradle'
 
       - name: Chmod gradlew
