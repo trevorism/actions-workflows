@@ -83,7 +83,7 @@ jobs:
             Add-Content -Path .\src\main\resources\secrets.properties -Value 'encryptionKey=${{ secrets.ENCRYPTION_KEY }}'
             
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@v6.1.0
 
       - name: Execute Gradle build
         run: ./gradlew clean appengineStage
