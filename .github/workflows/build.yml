@@ -14,10 +14,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v6.0.2
 
       - name: Set up JDK ${{ inputs.JDK_VERSION }}
-        uses: actions/setup-java@v4.7.1
+        uses: actions/setup-java@v5.2.0
         with:
           java-version: ${{ inputs.JDK_VERSION }}
           distribution: 'temurin'
@@ -27,7 +27,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6.1.0
 
       - name: Execute Gradle build
         run: ./gradlew clean build -P"trevorism.test.event=enabled"
@@ -35,8 +35,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: JUnit Report Action
-        uses: mikepenz/action-junit-report@v5.6.2
+        uses: mikepenz/action-junit-report@v6.4.1
         if: always()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
