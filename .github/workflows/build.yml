@@ -6,7 +6,7 @@ on:
       JDK_VERSION:
         required: false
         type: string
-        default: '21'
+        default: '25'
 
 permissions: write-all
 
@@ -40,4 +40,3 @@ jobs:
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
           github_token: ${{ secrets.GITHUB_TOKEN }}
-

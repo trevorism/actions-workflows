@@ -18,7 +18,7 @@ on:
       JDK_VERSION:
         required: false
         type: string
-        default: '21'
+        default: '25'
     secrets:
       CLIENT_ID:
         required: false
