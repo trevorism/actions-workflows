@@ -17,3 +17,5 @@ jobs:
         working-directory: ./src/app
       - run: npm run accept
         working-directory: ./src/app
+        env:
+          TREVORISM_TEST_EVENT: enabled
