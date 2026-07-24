@@ -1,24 +1,18 @@
 name: PR-aware build/deploy/test pipeline
 
-# Single entry point for a repo's deploy pipeline. The caller only supplies the
-# triggers and three values; all PR-vs-master orchestration lives here.
-#   - push to master / workflow_dispatch: deploy the release version, promote, test prod.
-#   - pull_request opened/updated: deploy a hidden pr-<n> version, test against it, no promote.
-#   - pull_request closed/merged: delete the pr-<n> version.
-
 on:
   workflow_call:
     inputs:
       gcp_project:
-        description: 'The GCP deploy target project, e.g. trevorism-project'
+        description: 'The GCP deploy target project'
         required: true
         type: string
       gcp_project_id:
-        description: 'The GCP project id, e.g. 51970111147'
+        description: 'The GCP project id'
         required: true
         type: string
       version:
-        description: 'Release version in dash form (e.g. 0-5-0), deployed verbatim on master'
+        description: 'Release version in dash form'
         required: true
         type: string
       JDK_VERSION:
@@ -26,7 +20,7 @@ on:
         type: string
         default: '25'
       service:
-        description: 'App Engine service name (from app.yaml). Defaults to the repo name when empty.'
+        description: 'App Engine service name. Defaults to the repo name when empty.'
         required: false
         type: string
         default: ''
