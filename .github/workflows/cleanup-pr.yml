@@ -37,8 +37,6 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v3'
 
       - name: Delete PR candidate version
-        # Service defaults to the repo name; exception repos pass `service` explicitly.
-        # '|| true' tolerates a PR closed without ever deploying.
         env:
           SERVICE: ${{ inputs.service != '' && inputs.service || github.event.repository.name }}
         run: |
