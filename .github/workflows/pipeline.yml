@@ -1,0 +1,76 @@
+name: PR-aware build/deploy/test pipeline
+
+# Single entry point for a repo's deploy pipeline. The caller only supplies the
+# triggers and three values; all PR-vs-master orchestration lives here.
+#   - push to master / workflow_dispatch: deploy the release version, promote, test prod.
+#   - pull_request opened/updated: deploy a hidden pr-<n> version, test against it, no promote.
+#   - pull_request closed/merged: delete the pr-<n> version.
+
+on:
+  workflow_call:
+    inputs:
+      gcp_project:
+        description: 'The GCP deploy target project, e.g. trevorism-project'
+        required: true
+        type: string
+      gcp_project_id:
+        description: 'The GCP project id, e.g. 51970111147'
+        required: true
+        type: string
+      version:
+        description: 'Release version in dash form (e.g. 0-5-0), deployed verbatim on master'
+        required: true
+        type: string
+      JDK_VERSION:
+        required: false
+        type: string
+        default: '25'
+      service:
+        description: 'App Engine service name (from app.yaml). Defaults to the repo name when empty.'
+        required: false
+        type: string
+        default: ''
+
+permissions: write-all
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    if: github.event.action != 'closed'
+    uses: trevorism/actions-workflows/.github/workflows/build.yml@master
+    with:
+      JDK_VERSION: ${{ inputs.JDK_VERSION }}
+
+  deploy:
+    needs: [build]
+    if: github.event.action != 'closed'
+    uses: trevorism/actions-workflows/.github/workflows/deploy.yml@master
+    with:
+      JDK_VERSION: ${{ inputs.JDK_VERSION }}
+      gcp_project: ${{ inputs.gcp_project }}
+      gcp_project_id: ${{ inputs.gcp_project_id }}
+      version: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || inputs.version }}
+      promote: ${{ github.event_name != 'pull_request' }}
+    secrets: inherit
+
+  test:
+    needs: [deploy]
+    if: github.event.action != 'closed'
+    uses: trevorism/actions-workflows/.github/workflows/accept.yml@master
+    with:
+      JDK_VERSION: ${{ inputs.JDK_VERSION }}
+      base_url: ${{ github.event_name == 'pull_request' && needs.deploy.outputs.version_url || '' }}
+    secrets: inherit
+
+  cleanup-pr:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    uses: trevorism/actions-workflows/.github/workflows/cleanup-pr.yml@master
+    with:
+      gcp_project: ${{ inputs.gcp_project }}
+      gcp_project_id: ${{ inputs.gcp_project_id }}
+      version: ${{ format('pr-{0}', github.event.pull_request.number) }}
+      service: ${{ inputs.service }}
+    secrets: inherit
