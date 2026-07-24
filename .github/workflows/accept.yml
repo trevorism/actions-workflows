@@ -11,7 +11,7 @@ on:
         type: string
         default: '25'
       base_url:
-        description: 'Base URL to run acceptance tests against. Empty falls back to the prod URL in the glue.'
+        description: 'Base URL to run acceptance tests against'
         required: false
         type: string
         default: ''

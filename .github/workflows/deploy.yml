@@ -20,13 +20,13 @@ on:
         type: string
         default: '25'
       promote:
-        description: 'Whether to promote the deployed version to serve live traffic. PR envs pass false.'
+        description: 'Whether to promote the deployed version to serve live traffic.'
         required: false
         type: boolean
         default: true
     outputs:
       version_url:
-        description: 'The version-specific URL of the deployed App Engine version (reachable regardless of traffic split).'
+        description: 'The version-specific URL of the deployed App Engine version'
         value: ${{ jobs.deliver.outputs.version_url }}
     secrets:
       CLIENT_ID:
@@ -119,10 +119,9 @@ jobs:
         with:
           script: |
             const marker = '<!-- pr-candidate-deploy -->';
-            const body = `${marker}\n**PR candidate deployed** (hidden — no live traffic)\n\n`
+            const body = `${marker}\n**PR candidate deployed**\n\n`
               + `- Version: \`${process.env.CANDIDATE_VERSION}\`\n`
-              + `- Test it here: ${process.env.CANDIDATE_URL}\n\n`
-              + `Merging this PR will deploy + promote to live.`;
+              + `- Test it here: ${process.env.CANDIDATE_URL}\n\n`;
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
             const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });

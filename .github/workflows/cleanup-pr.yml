@@ -1,21 +1,18 @@
 name: Delete a PR candidate App Engine version
 
-# Deletes the hidden pr-<n> version deployed for a pull request, so PR
-# environments don't accumulate. Called when a PR is closed or merged.
-
 on:
   workflow_call:
     inputs:
       gcp_project:
-        description: 'The project on GCP which is the deploy target. Should be of the format: trevorism-<xyz>'
+        description: 'The project on GCP which is the deploy target.'
         required: true
         type: string
       gcp_project_id:
-        description: 'The GCP project id. Should be of the format: 123456789'
+        description: 'The GCP project id.'
         required: true
         type: string
       version:
-        description: 'The App Engine version id to delete (e.g. pr-42).'
+        description: 'The App Engine version id to delete'
         required: true
         type: string
 
