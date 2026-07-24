@@ -48,7 +48,11 @@ on:
       ENCRYPTION_KEY:
         required: false
 
-permissions: write-all
+permissions:
+  contents: read
+  packages: read
+  id-token: write
+  pull-requests: write
 
 jobs:
   deliver:

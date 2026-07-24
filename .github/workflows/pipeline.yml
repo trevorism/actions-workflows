@@ -25,7 +25,12 @@ on:
         type: string
         default: ''
 
-permissions: write-all
+permissions:
+  contents: read
+  packages: read
+  id-token: write
+  checks: write
+  pull-requests: write
 
 concurrency:
   group: deploy-${{ github.ref }}
