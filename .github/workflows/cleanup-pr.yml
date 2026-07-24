@@ -1,0 +1,43 @@
+name: Delete a PR candidate App Engine version
+
+# Deletes the hidden pr-<n> version deployed for a pull request, so PR
+# environments don't accumulate. Called when a PR is closed or merged.
+
+on:
+  workflow_call:
+    inputs:
+      gcp_project:
+        description: 'The project on GCP which is the deploy target. Should be of the format: trevorism-<xyz>'
+        required: true
+        type: string
+      gcp_project_id:
+        description: 'The GCP project id. Should be of the format: 123456789'
+        required: true
+        type: string
+      version:
+        description: 'The App Engine version id to delete (e.g. pr-42).'
+        required: true
+        type: string
+
+permissions: write-all
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auth with google
+        uses: 'google-github-actions/auth@v3'
+        with:
+          service_account: ${{ format('github-{0}@{0}.iam.gserviceaccount.com', inputs.gcp_project ) }}
+          workload_identity_provider: ${{ format('projects/{0}/locations/global/workloadIdentityPools/github-{1}-pool/providers/{1}-provider', inputs.gcp_project_id, inputs.gcp_project) }}
+
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v3'
+
+      - name: Delete PR candidate version
+        # Service name matches the repo name. '|| true' tolerates a PR closed without ever deploying.
+        run: |
+          gcloud app versions delete "${{ inputs.version }}" \
+            --service="${{ github.event.repository.name }}" \
+            --project="${{ inputs.gcp_project }}" \
+            --quiet || true

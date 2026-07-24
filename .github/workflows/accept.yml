@@ -10,6 +10,11 @@ on:
         required: false
         type: string
         default: '25'
+      base_url:
+        description: 'Base URL to run acceptance tests against. Empty falls back to the prod URL in the glue.'
+        required: false
+        type: string
+        default: ''
     secrets:
       CLIENT_ID:
         required: false
@@ -67,3 +72,4 @@ jobs:
         run: ./gradlew clean acceptance
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACCEPTANCE_BASE_URL: ${{ inputs.base_url }}

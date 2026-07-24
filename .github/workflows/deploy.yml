@@ -19,6 +19,15 @@ on:
         required: false
         type: string
         default: '25'
+      promote:
+        description: 'Whether to promote the deployed version to serve live traffic. PR envs pass false.'
+        required: false
+        type: boolean
+        default: true
+    outputs:
+      version_url:
+        description: 'The version-specific URL of the deployed App Engine version (reachable regardless of traffic split).'
+        value: ${{ jobs.deliver.outputs.version_url }}
     secrets:
       CLIENT_ID:
         required: false
@@ -44,6 +53,8 @@ permissions: write-all
 jobs:
   deliver:
     runs-on: ubuntu-latest
+    outputs:
+      version_url: ${{ steps.deploy.outputs.version_url }}
     steps:
       - uses: actions/checkout@v6.0.2
 
@@ -91,18 +102,44 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Deploy to App Engine'
+        id: deploy
         uses: 'google-github-actions/deploy-appengine@v3.0.1'
         with:
           working_directory: "build/staged-app"
           deliverables: 'app.yaml'
-          promote: true
+          promote: ${{ inputs.promote }}
           version: ${{ inputs.version }}
 
+      - name: Comment candidate URL on PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        env:
+          CANDIDATE_URL: ${{ steps.deploy.outputs.version_url }}
+          CANDIDATE_VERSION: ${{ inputs.version }}
+        with:
+          script: |
+            const marker = '<!-- pr-candidate-deploy -->';
+            const body = `${marker}\n**PR candidate deployed** (hidden — no live traffic)\n\n`
+              + `- Version: \`${process.env.CANDIDATE_VERSION}\`\n`
+              + `- Test it here: ${process.env.CANDIDATE_URL}\n\n`
+              + `Merging this PR will deploy + promote to live.`;
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+
       - name: Get current time
+        if: ${{ inputs.promote }}
         uses: josStorer/get-current-time@v2
         id: current-time
 
       - name: Send deploy event
+        if: ${{ inputs.promote }}
         uses: dkershner6/post-api-call-action@v2
         with:
           url: "https://event.data.trevorism.com/event/deploy"
