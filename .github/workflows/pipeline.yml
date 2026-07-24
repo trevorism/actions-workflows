@@ -33,8 +33,10 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: deploy-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  # PR events group by PR number (a merge's close event must never share the
+  # master push's group), and a close/merge never cancels an in-flight deploy.
+  group: deploy-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
 
 jobs:
   build:
