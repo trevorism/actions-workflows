@@ -15,6 +15,11 @@ on:
         description: 'The App Engine version id to delete'
         required: true
         type: string
+      service:
+        description: 'App Engine service name (from app.yaml). Defaults to the repo name when empty.'
+        required: false
+        type: string
+        default: ''
 
 permissions: write-all
 
@@ -32,9 +37,12 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v3'
 
       - name: Delete PR candidate version
-        # Service name matches the repo name. '|| true' tolerates a PR closed without ever deploying.
+        # Service defaults to the repo name; exception repos pass `service` explicitly.
+        # '|| true' tolerates a PR closed without ever deploying.
+        env:
+          SERVICE: ${{ inputs.service != '' && inputs.service || github.event.repository.name }}
         run: |
           gcloud app versions delete "${{ inputs.version }}" \
-            --service="${{ github.event.repository.name }}" \
+            --service="${SERVICE}" \
             --project="${{ inputs.gcp_project }}" \
             --quiet || true
