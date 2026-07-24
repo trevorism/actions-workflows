@@ -34,7 +34,7 @@ on:
       CLIENT_SECRET:
         required: false
       SIGNING_KEY:
-        required: true
+        required: false
       TOKEN:
         required: false
       ACCESS_TOKEN:
