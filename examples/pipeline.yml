@@ -1,0 +1,28 @@
+name: Deploy tested project to GCP
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    types: [ opened, synchronize, reopened, closed ]
+  pull_request_target:
+    branches: [ master ]
+    types: [ closed ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+  id-token: write
+  checks: write
+  pull-requests: write
+
+jobs:
+  pipeline:
+    uses: trevorism/actions-workflows/.github/workflows/pipeline.yml@master
+    with:
+      gcp_project: 'trevorism-testing'
+      gcp_project_id: '729203316942'
+      version: '0-2-0'
+    secrets: inherit

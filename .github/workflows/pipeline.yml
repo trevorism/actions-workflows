@@ -38,14 +38,14 @@ concurrency:
 
 jobs:
   build:
-    if: github.event.action != 'closed'
+    if: github.event_name != 'pull_request_target' && github.event.action != 'closed'
     uses: trevorism/actions-workflows/.github/workflows/build.yml@master
     with:
       JDK_VERSION: ${{ inputs.JDK_VERSION }}
 
   deploy:
     needs: [build]
-    if: github.event.action != 'closed'
+    if: github.event_name != 'pull_request_target' && github.event.action != 'closed'
     uses: trevorism/actions-workflows/.github/workflows/deploy.yml@master
     with:
       JDK_VERSION: ${{ inputs.JDK_VERSION }}
@@ -57,7 +57,7 @@ jobs:
 
   test:
     needs: [deploy]
-    if: github.event.action != 'closed'
+    if: github.event_name != 'pull_request_target' && github.event.action != 'closed'
     uses: trevorism/actions-workflows/.github/workflows/accept.yml@master
     with:
       JDK_VERSION: ${{ inputs.JDK_VERSION }}
@@ -65,7 +65,7 @@ jobs:
     secrets: inherit
 
   cleanup-pr:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.action == 'closed'
     uses: trevorism/actions-workflows/.github/workflows/cleanup-pr.yml@master
     with:
       gcp_project: ${{ inputs.gcp_project }}
