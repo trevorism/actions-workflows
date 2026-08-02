@@ -24,5 +24,4 @@ jobs:
     with:
       gcp_project: 'trevorism-testing'
       gcp_project_id: '729203316942'
-      version: '0-2-0'
     secrets: inherit

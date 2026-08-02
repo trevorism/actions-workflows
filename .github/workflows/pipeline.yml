@@ -12,9 +12,10 @@ on:
         required: true
         type: string
       version:
-        description: 'Release version in dash form'
-        required: true
+        description: 'Release version in dash form. When empty, resolved from appVersion in gradle.properties.'
+        required: false
         type: string
+        default: ''
       JDK_VERSION:
         required: false
         type: string

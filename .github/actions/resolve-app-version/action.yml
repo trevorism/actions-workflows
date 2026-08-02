@@ -1,0 +1,33 @@
+name: 'Resolve app version'
+description: 'Resolves the App Engine version id from the workflow input or from appVersion in gradle.properties'
+
+inputs:
+  version:
+    description: 'Explicit version in dash form. Takes precedence when supplied.'
+    required: false
+    default: ''
+  properties-file:
+    description: 'Path to the gradle properties file holding appVersion'
+    required: false
+    default: 'gradle.properties'
+
+outputs:
+  version:
+    description: 'The resolved App Engine version id'
+    value: ${{ steps.resolve.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - id: resolve
+      shell: bash
+      env:
+        REQUESTED_VERSION: ${{ inputs.version }}
+        PROPERTIES_FILE: ${{ inputs.properties-file }}
+      run: |
+        if ! resolved=$(bash "${GITHUB_ACTION_PATH}/resolve-app-version.sh" "${REQUESTED_VERSION}" "${PROPERTIES_FILE}" 2>"${RUNNER_TEMP}/resolve-app-version.err"); then
+          echo "::error::$(cat "${RUNNER_TEMP}/resolve-app-version.err")"
+          exit 1
+        fi
+        echo "Resolved App Engine version ${resolved}"
+        echo "version=${resolved}" >> "$GITHUB_OUTPUT"
