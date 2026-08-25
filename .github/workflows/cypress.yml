@@ -2,6 +2,11 @@ name: Cypress end to end application testing
 
 on:
   workflow_call:
+    secrets:
+      CYPRESS_USERNAME:
+        required: false
+      CYPRESS_PASSWORD:
+        required: false
 
 permissions: write-all
 
@@ -17,3 +22,7 @@ jobs:
         working-directory: ./src/app
       - run: npm run test:e2e
         working-directory: ./src/app
+        env:
+          CYPRESS_trevorismTestEvent: enabled
+          CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}
+          CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
