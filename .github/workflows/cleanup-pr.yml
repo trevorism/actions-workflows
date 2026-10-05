@@ -1,4 +1,4 @@
-name: Delete a PR candidate App Engine version
+name: Delete stale PR candidate App Engine versions
 
 on:
   workflow_call:
@@ -12,9 +12,10 @@ on:
         required: true
         type: string
       version:
-        description: 'The App Engine version id to delete'
-        required: true
+        description: 'Deprecated and ignored. Every pr-<number> version whose pull request is not open is deleted.'
+        required: false
         type: string
+        default: ''
       service:
         description: 'App Engine service name (from app.yaml). Defaults to the repo name when empty.'
         required: false
@@ -24,6 +25,7 @@ on:
 permissions:
   contents: read
   id-token: write
+  pull-requests: read
 
 jobs:
   cleanup:
@@ -38,11 +40,27 @@ jobs:
       - name: Set up Cloud SDK
         uses: 'google-github-actions/setup-gcloud@v3'
 
-      - name: Delete PR candidate version
+      - name: Delete PR candidate versions without an open pull request
         env:
+          GH_TOKEN: ${{ github.token }}
           SERVICE: ${{ inputs.service != '' && inputs.service || github.event.repository.name }}
+          GCP_PROJECT: ${{ inputs.gcp_project }}
         run: |
-          gcloud app versions delete "${{ inputs.version }}" \
+          open_versions=$(gh pr list --repo "${GITHUB_REPOSITORY}" --state open --limit 1000 --json number --jq '.[] | "pr-\(.number)"')
+          pr_versions=$(gcloud app versions list \
             --service="${SERVICE}" \
-            --project="${{ inputs.gcp_project }}" \
-            --quiet || true
+            --project="${GCP_PROJECT}" \
+            --filter="version.id~^pr-[0-9]+$" \
+            --format="value(version.id)" || true)
+
+          for version in ${pr_versions}; do
+            if grep -qx "${version}" <<< "${open_versions}"; then
+              echo "Keeping ${version}: pull request is open"
+            else
+              echo "Deleting ${version}"
+              gcloud app versions delete "${version}" \
+                --service="${SERVICE}" \
+                --project="${GCP_PROJECT}" \
+                --quiet || true
+            fi
+          done
